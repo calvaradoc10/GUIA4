@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Gestión de Secciones | Sistema Académico</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f5f3fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2d2440;
+            min-height: 100vh;
+        }
+
+        .barra-superior {
+            background: #3b1f6e;
+            color: white;
+            padding: 22px 0;
+        }
+
+        .marca {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .subtitulo {
+            color: #d6c9ee;
+            font-size: 13px;
+        }
+
+        .titulo-pagina {
+            color: #3b1f6e;
+            font-weight: 700;
+        }
+
+        .tarjeta {
+            background: white;
+            border: 1px solid #e6e1f0;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(45,25,85,.05);
+        }
+
+        .resumen {
+            border-left: 4px solid #e08a1e;
+        }
+
+        .numero {
+            color: #3b1f6e;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .btn-principal {
+            background: #3b1f6e;
+            color: white;
+            border: none;
+        }
+
+        .btn-principal:hover {
+            background: #5b3a9e;
+            color: white;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #e0d9ec;
+            border-radius: 8px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #e08a1e;
+            box-shadow: 0 0 0 .2rem rgba(224,138,30,.12);
+        }
+
+        .form-check-input:checked {
+            background-color: #e08a1e;
+            border-color: #e08a1e;
+        }
+
+        .etiqueta-filtro {
+            color: #3b1f6e;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .tabla-secciones thead th {
+            background: #5b3a9e;
+            color: white;
+            padding: 15px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .tabla-secciones tbody td {
+            padding: 14px;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .tabla-secciones tbody tr:hover {
+            background: #f1edf9;
+        }
+
+        .botones-acciones {
+            display: flex;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .panel-info {
+            background: #fdf1e1;
+            border: 1px solid #f5cf9a;
+            color: #5b3a9e;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .pie-sistema {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header class="barra-superior">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="marca">
+                        SISTEMA ACADÉMICO
+                    </div>
+
+                    <div class="subtitulo">
+                        Plataforma de Gestión Universitaria
+                    </div>
+                </div>
+
+                <a href="/admin/"
+                   class="btn btn-outline-light btn-sm">
+                    Administración
+                </a>
+
+            </div>
+
+        </div>
+    </header>
+
+    {% include "core/_navegacion.html" %}
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container py-5">
+
+        <!-- MENSAJES DEL SISTEMA -->
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                    role="alert"
+                >
+
+                    <strong>Sistema Académico:</strong>
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        <!-- TÍTULO PRINCIPAL -->
+        <div class="mb-4">
+
+            <h2 class="titulo-pagina">
+                Gestión de Secciones Académicas
+            </h2>
+
+            <p class="text-secondary">
+                Administra las secciones universitarias,
+                profesores responsables, paralelos,
+                jornadas y cupos de estudiantes.
+            </p>
+
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="tarjeta resumen p-4 mb-4">
+
+            <div class="small text-secondary">
+                SECCIONES ENCONTRADAS
+            </div>
+
+            <div class="numero">
+                {{ paginator.count }}
+            </div>
+
+            <div class="small text-secondary">
+                Secciones disponibles según los filtros aplicados
+            </div>
+
+        </div>
+
+        <!-- FORMULARIO GENERAL DE FILTROS -->
+        <form
+            method="get"
+            action="{% url 'academico:seccion_lista' %}"
+        >
+
+            <div class="row g-4">
+
+                <!-- PANEL IZQUIERDO -->
+                <div class="col-lg-3">
+
+                    <!-- PERSONALIZAR COLUMNAS -->
+                    <div class="tarjeta p-4">
+
+                        <h5 class="fw-bold mb-3">
+                            Personalizar tabla
+                        </h5>
+
+                        <p class="text-secondary small">
+                            Selecciona las columnas que deseas visualizar.
+                        </p>
+
+                        {% for campo, etiqueta in campos_disponibles.items %}
+
+                            <div class="form-check mb-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="campos"
+                                    value="{{ campo }}"
+                                    id="campo{{ forloop.counter }}"
+                                    {% if campo in campos_seleccionados %}checked{% endif %}
+                                >
+
+                                <label
+                                    class="form-check-label"
+                                    for="campo{{ forloop.counter }}"
+                                >
+                                    {{ etiqueta }}
+                                </label>
+
+                            </div>
+
+                        {% endfor %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-principal w-100"
+                        >
+                            Aplicar columnas
+                        </button>
+
+                    </div>
+
+                    <!-- INFORMACIÓN ADICIONAL -->
+                    <div class="panel-info mt-3">
+
+                        <h6 class="fw-bold">
+                            Organización académica
+                        </h6>
+
+                        <p class="small mb-0">
+                            Cada sección corresponde a un curso
+                            dentro de un período académico.
+
+                            Permite identificar al profesor,
+                            el paralelo, la jornada y el cupo
+                            disponible para estudiantes.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- PANEL PRINCIPAL -->
+                <div class="col-lg-9">
+
+                    <div class="tarjeta overflow-hidden">
+
+                        <!-- SECCIÓN DE FILTROS -->
+                        <div class="p-4 border-bottom">
+
+                            <h5 class="fw-bold mb-3">
+                                Buscar secciones académicas
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <!-- BUSCADOR -->
+                                <div class="col-12">
+
+                                    <label
+                                        for="buscar"
+                                        class="form-label etiqueta-filtro"
+                                    >
+                                        Buscar sección
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="buscar"
+                                        name="buscar"
+                                        class="form-control"
+                                        value="{{ request.GET.buscar|default:'' }}"
+                                        placeholder="Buscar curso, profesor, período o paralelo"
+                                    >
+
+                                </div>
+
+                                <!-- FILTRO POR CURSO -->
+                                <div class="col-md-6">
+
+                                    <label
+                                        for="curso"
+                                        class="form-label etiqueta-filtro"
+                                    >
+                                        Curso académico
+                                    </label>
+
+                                    <select
+                                        name="curso"
+                                        id="curso"
+                                        class="form-select"
+                                    >
+
+                                        <option value="">
+                                            Todos los cursos
+                                        </option>
+
+                                        {% for curso in cursos %}
+
+                                            <option
+                                                value="{{ curso.pk }}"
+                                                {% if curso_seleccionado == curso.pk|stringformat:"s" %}selected{% endif %}
+                                            >
+                                                {{ curso.codigo }} -
+                                                {{ curso.nombre }}
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+                                <!-- FILTRO POR PERÍODO -->
+                                <div class="col-md-6">
+
+                                    <label
+                                        for="periodo"
+                                        class="form-label etiqueta-filtro"
+                                    >
+                                        Período académico
+                                    </label>
+
+                                    <select
+                                        name="periodo"
+                                        id="periodo"
+                                        class="form-select"
+                                    >
+
+                                        <option value="">
+                                            Todos los períodos
+                                        </option>
+
+                                        {% for periodo in periodos %}
+
+                                            <option
+                                                value="{{ periodo.pk }}"
+                                                {% if periodo_seleccionado == periodo.pk|stringformat:"s" %}selected{% endif %}
+                                            >
+                                                {{ periodo.nombre }}
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+                                <!-- FILTRO POR JORNADA -->
+                                <div class="col-md-6">
+
+                                    <label
+                                        for="jornada"
+                                        class="form-label etiqueta-filtro"
+                                    >
+                                        Jornada académica
+                                    </label>
+
+                                    <select
+                                        name="jornada"
+                                        id="jornada"
+                                        class="form-select"
+                                    >
+
+                                        <option value="">
+                                            Todas las jornadas
+                                        </option>
+
+                                        {% for valor, etiqueta in jornadas %}
+
+                                            <option
+                                                value="{{ valor }}"
+                                                {% if jornada_seleccionada == valor %}selected{% endif %}
+                                            >
+                                                {{ etiqueta }}
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <!-- BOTONES DE FILTROS -->
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-principal"
+                                >
+                                    Aplicar filtros
+                                </button>
+
+                                <a
+                                    href="{% url 'academico:seccion_lista' %}"
+                                    class="btn btn-outline-secondary"
+                                >
+                                    Limpiar filtros
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ENCABEZADO DEL LISTADO -->
+                        <div class="p-4 border-bottom">
+
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                                <div>
+
+                                    <h5 class="fw-bold mb-1">
+                                        Listado de secciones
+                                    </h5>
+
+                                    <small class="text-secondary">
+                                        Organización de cursos, paralelos y docentes
+                                    </small>
+
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2">
+
+                                    <a
+                                        href="{% url 'academico:seccion_crear' %}"
+                                        class="btn btn-principal btn-sm"
+                                    >
+                                        + Nueva sección
+                                    </a>
+
+                                    <button
+                                        type="submit"
+                                        name="exportar"
+                                        value="excel"
+                                        class="btn btn-success btn-sm"
+                                    >
+                                        Descargar Excel
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        name="exportar"
+                                        value="pdf"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        Descargar PDF
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- TABLA DE SECCIONES -->
+                        <div class="table-responsive">
+
+                            <table class="table table-striped tabla-secciones mb-0">
+
+                                <thead>
+
+                                    <tr>
+
+                                        {% for encabezado in encabezados %}
+                                            <th>{{ encabezado }}</th>
+                                        {% endfor %}
+
+                                        <th>Acciones</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for seccion, fila in filas_con_seccion %}
+
+                                        <tr>
+
+                                            {% for valor in fila %}
+
+                                                <td>
+                                                    {{ valor|default_if_none:"—" }}
+                                                </td>
+
+                                            {% endfor %}
+
+                                            <td>
+
+                                                <div class="botones-acciones">
+
+                                                    <a
+                                                        href="{% url 'academico:seccion_editar' seccion.pk %}"
+                                                        class="btn btn-warning btn-sm"
+                                                    >
+                                                        Editar
+                                                    </a>
+
+                                                    <a
+                                                        href="{% url 'academico:seccion_eliminar' seccion.pk %}"
+                                                        class="btn btn-danger btn-sm"
+                                                    >
+                                                        Eliminar
+                                                    </a>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% empty %}
+
+                                        <tr>
+
+                                            <td
+                                                colspan="{{ encabezados|length|add:'1' }}"
+                                                class="text-center py-5 text-secondary"
+                                            >
+                                                No se encontraron secciones académicas.
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <!-- PAGINACIÓN -->
+                        {% if is_paginated %}
+
+                            <div class="p-3 border-top d-flex justify-content-between align-items-center">
+
+                                <span class="small text-secondary">
+                                    Página {{ page_obj.number }}
+                                    de {{ paginator.num_pages }}
+                                </span>
+
+                                <div class="d-flex gap-2">
+
+                                    {% if page_obj.has_previous %}
+
+                                        <button
+                                            type="submit"
+                                            name="page"
+                                            value="{{ page_obj.previous_page_number }}"
+                                            class="btn btn-outline-secondary btn-sm"
+                                        >
+                                            Anterior
+                                        </button>
+
+                                    {% endif %}
+
+                                    {% if page_obj.has_next %}
+
+                                        <button
+                                            type="submit"
+                                            name="page"
+                                            value="{{ page_obj.next_page_number }}"
+                                            class="btn btn-principal btn-sm"
+                                        >
+                                            Siguiente
+                                        </button>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="pie-sistema">
+        Sistema Académico |
+        Plataforma de Gestión Universitaria
+    </footer>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+</html>

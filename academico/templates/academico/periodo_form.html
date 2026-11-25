@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% if object %}Editar{% else %}Registrar{% endif %}
+        período académico | Sistema Académico
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f5f3fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2d2440;
+            min-height: 100vh;
+        }
+
+        .barra-superior {
+            background: #3b1f6e;
+            padding: 22px 0;
+            color: white;
+        }
+
+        .marca {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .subtitulo {
+            color: #d6c9ee;
+            font-size: 13px;
+        }
+
+        .titulo-pagina {
+            color: #3b1f6e;
+            font-weight: 700;
+        }
+
+        .tarjeta {
+            background: white;
+            border: 1px solid #e6e1f0;
+            border-radius: 15px;
+            box-shadow: 0 5px 22px rgba(45,25,85,.06);
+            overflow: hidden;
+        }
+
+        .encabezado-form {
+            background: #3b1f6e;
+            padding: 22px 28px;
+            color: white;
+        }
+
+        .titulo-form {
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .cuerpo-form {
+            padding: 30px;
+        }
+
+        .titulo-seccion {
+            color: #3b1f6e;
+            font-size: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #e6e1f0;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #43395a;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            border-color: #e0d9ec;
+            padding: 11px 13px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #e08a1e;
+            box-shadow: 0 0 0 .2rem rgba(224,138,30,.12);
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #e08a1e;
+            border-color: #e08a1e;
+        }
+
+        .estado-periodo {
+            background: #faf9fd;
+            border: 1px solid #e6e1f0;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .btn-principal {
+            background: #3b1f6e;
+            color: white;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-principal:hover {
+            background: #5b3a9e;
+            color: white;
+        }
+
+        .btn-cancelar {
+            padding: 11px 24px;
+            border-radius: 8px;
+        }
+
+        .mensaje-informativo {
+            background: #fdf1e1;
+            border: 1px solid #f5cf9a;
+            color: #5b3a9e;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        .pie-sistema {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .cuerpo-form {
+                padding: 20px;
+            }
+
+            .encabezado-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header class="barra-superior">
+
+        <div class="container">
+
+            <div class="marca">
+                SISTEMA ACADÉMICO
+            </div>
+
+            <div class="subtitulo">
+                Plataforma de Gestión Universitaria
+            </div>
+
+        </div>
+
+    </header>
+
+    {% include "core/_navegacion.html" %}
+
+    <main class="container py-5">
+
+        <!-- TÍTULO PRINCIPAL -->
+        <div class="mb-4">
+
+            <h2 class="titulo-pagina">
+
+                {% if object %}
+                    Editar período académico
+                {% else %}
+                    Registrar período académico
+                {% endif %}
+
+            </h2>
+
+            <p class="text-secondary">
+                Complete la información correspondiente
+                al calendario académico universitario.
+            </p>
+
+        </div>
+
+        <!-- TARJETA PRINCIPAL -->
+        <div class="tarjeta">
+
+            <!-- ENCABEZADO DEL FORMULARIO -->
+            <div class="encabezado-form">
+
+                <h3 class="titulo-form">
+                    Información del período académico
+                </h3>
+
+                <div class="small mt-2">
+                    Gestión del calendario universitario
+                </div>
+
+            </div>
+
+            <!-- CUERPO -->
+            <div class="cuerpo-form">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <!-- ERRORES GENERALES -->
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <h5 class="titulo-seccion">
+                        Datos generales del período
+                    </h5>
+
+                    <!-- CAMPOS -->
+                    <div class="row g-4">
+
+                        {% for campo in form %}
+
+                            {% if campo.name == "activo" %}
+
+                                <!-- ESTADO DEL PERÍODO -->
+                                <div class="col-12">
+
+                                    <div class="estado-periodo">
+
+                                        <h6 class="fw-bold mb-3">
+                                            Estado del período académico
+                                        </h6>
+
+                                        <div class="form-check">
+
+                                            {{ campo }}
+
+                                            <label
+                                                class="form-check-label ms-2"
+                                                for="{{ campo.id_for_label }}"
+                                            >
+                                                Período académico activo
+                                            </label>
+
+                                        </div>
+
+                                        <p class="small text-secondary mt-3 mb-0">
+                                            Marque esta casilla si el período
+                                            académico debe permanecer activo.
+                                        </p>
+
+                                        {% for error in campo.errors %}
+
+                                            <div class="text-danger small mt-2">
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            {% else %}
+
+                                <!-- CAMPOS DE TEXTO Y FECHAS -->
+                                <div class="col-md-6">
+
+                                    <label
+                                        class="form-label"
+                                        for="{{ campo.id_for_label }}"
+                                    >
+
+                                        {{ campo.label }}
+
+                                        {% if campo.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ campo }}
+
+                                    {% if campo.help_text %}
+
+                                        <div class="form-text">
+                                            {{ campo.help_text }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% for error in campo.errors %}
+
+                                        <div class="text-danger small mt-1">
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- MENSAJE INFORMATIVO -->
+                    <div class="mensaje-informativo mt-4">
+
+                        <strong>Información importante:</strong>
+
+                        La fecha de finalización debe ser
+                        posterior a la fecha de inicio.
+
+                        Los campos marcados con * son obligatorios.
+
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="border-top mt-5 pt-4">
+
+                        <div class="d-flex flex-wrap gap-3 justify-content-end">
+
+                            <a
+                                href="{% url 'academico:periodo_lista' %}"
+                                class="btn btn-outline-secondary btn-cancelar"
+                            >
+                                Cancelar
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-principal"
+                            >
+
+                                {% if object %}
+                                    Guardar cambios
+                                {% else %}
+                                    Registrar período académico
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="pie-sistema">
+
+        Sistema Académico |
+        Plataforma de Gestión Universitaria
+
+    </footer>
+
+</body>
+</html>

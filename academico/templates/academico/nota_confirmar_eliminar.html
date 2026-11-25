@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Eliminar notas | Sistema Académico</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f5f3fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2d2440;
+            min-height: 100vh;
+        }
+
+        .barra-superior {
+            background: #3b1f6e;
+            color: white;
+            padding: 22px 0;
+        }
+
+        .marca {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .subtitulo {
+            color: #d6c9ee;
+            font-size: 13px;
+        }
+
+        .tarjeta {
+            background: white;
+            border: 1px solid #e6e1f0;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(45,25,85,.08);
+            overflow: hidden;
+        }
+
+        .encabezado-alerta {
+            background: #fff1f2;
+            border-bottom: 1px solid #fecdd3;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .icono-alerta {
+            width: 64px;
+            height: 64px;
+            line-height: 64px;
+            border-radius: 50%;
+            background: #ffe4e6;
+            color: #b42332;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .titulo-alerta {
+            color: #b42332;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .cuerpo {
+            padding: 35px;
+        }
+
+        .titulo-seccion {
+            color: #3b1f6e;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .panel-informacion {
+            background: #faf9fd;
+            border: 1px solid #e6e1f0;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .etiqueta {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .valor {
+            color: #3b1f6e;
+            font-size: 15px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .tabla-calificaciones {
+            border: 1px solid #e6e1f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tabla-calificaciones thead th {
+            background: #5b3a9e;
+            color: white;
+            text-align: center;
+            padding: 14px;
+        }
+
+        .tabla-calificaciones tbody td {
+            text-align: center;
+            padding: 15px;
+            font-weight: 600;
+            color: #3b1f6e;
+        }
+
+        .promedio {
+            background: #f1edf9;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .numero-promedio {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b1f6e;
+        }
+
+        .estado-aprobado {
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .estado-reprobado {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .mensaje-advertencia {
+            background: #fff8e6;
+            border: 1px solid #f3d38a;
+            border-radius: 10px;
+            padding: 18px;
+            color: #795500;
+        }
+
+        .btn-eliminar {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-eliminar:hover {
+            background: #b42332;
+            color: white;
+        }
+
+        .btn-cancelar {
+            padding: 12px 24px;
+            border-radius: 8px;
+        }
+
+        .pie-sistema {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .cuerpo {
+                padding: 20px;
+            }
+
+            .encabezado-alerta {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header class="barra-superior">
+        <div class="container">
+
+            <div class="marca">
+                SISTEMA ACADÉMICO
+            </div>
+
+            <div class="subtitulo">
+                Plataforma de Gestión Universitaria
+            </div>
+
+        </div>
+    </header>
+
+    {% include "core/_navegacion.html" %}
+
+    <main class="container py-5">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-9">
+
+                <div class="tarjeta">
+
+                    <!-- ENCABEZADO DE ADVERTENCIA -->
+                    <div class="encabezado-alerta">
+
+                        <div class="icono-alerta">
+                            !
+                        </div>
+
+                        <h2 class="titulo-alerta">
+                            Confirmar eliminación
+                        </h2>
+
+                        <p class="text-secondary mb-0">
+                            Estás a punto de eliminar
+                            un registro de calificaciones académicas.
+                        </p>
+
+                    </div>
+
+                    <!-- CONTENIDO PRINCIPAL -->
+                    <div class="cuerpo">
+
+                        <!-- MENSAJE DE ADVERTENCIA -->
+                        <div class="mensaje-advertencia mb-4">
+
+                            <strong>Atención:</strong>
+
+                            Esta operación no se puede deshacer.
+
+                            Se eliminarán las tres calificaciones,
+                            el promedio y el estado académico
+                            correspondientes a este registro.
+
+                        </div>
+
+                        <!-- INFORMACIÓN DEL ESTUDIANTE -->
+                        <h5 class="titulo-seccion">
+                            Información del estudiante
+                        </h5>
+
+                        <div class="panel-informacion mb-4">
+
+                            <div class="row g-4">
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        CÉDULA DEL ESTUDIANTE
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.matricula.estudiante.cedula }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        NOMBRES Y APELLIDOS
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.matricula.estudiante.nombres }}
+                                        {{ object.matricula.estudiante.apellidos }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        ASIGNATURA
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.matricula.seccion.curso.nombre }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        PERÍODO ACADÉMICO
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.matricula.seccion.periodo.nombre }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        PARALELO
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.matricula.seccion.paralelo }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        IDENTIFICADOR DEL REGISTRO
+                                    </div>
+
+                                    <div class="valor">
+                                        {{ object.pk }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- CALIFICACIONES -->
+                        <h5 class="titulo-seccion">
+                            Calificaciones registradas
+                        </h5>
+
+                        <div class="table-responsive mb-4">
+
+                            <table class="table tabla-calificaciones mb-0">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Nota 1</th>
+                                        <th>Nota 2</th>
+                                        <th>Nota 3</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <td>{{ object.n1 }}</td>
+                                        <td>{{ object.n2 }}</td>
+                                        <td>{{ object.n3 }}</td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <!-- PROMEDIO Y ESTADO -->
+                        <div class="promedio mb-4">
+
+                            <div class="row align-items-center g-4">
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta">
+                                        PROMEDIO GENERAL
+                                    </div>
+
+                                    <div class="numero-promedio">
+                                        {{ object.promedio }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="etiqueta mb-3">
+                                        ESTADO ACADÉMICO
+                                    </div>
+
+                                    {% if object.promedio >= 70 %}
+
+                                        <span class="estado-aprobado">
+                                            Aprobado
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="estado-reprobado">
+                                            Reprobado
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PREGUNTA DE CONFIRMACIÓN -->
+                        <p class="text-secondary">
+
+                            ¿Estás seguro de que deseas eliminar
+                            las calificaciones del estudiante
+
+                            <strong>
+                                {{ object.matricula.estudiante.nombres }}
+                                {{ object.matricula.estudiante.apellidos }}
+                            </strong>
+
+                            correspondientes a esta asignatura?
+
+                        </p>
+
+                        <!-- FORMULARIO DE ELIMINACIÓN -->
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <div class="d-flex flex-wrap gap-3 justify-content-end border-top pt-4 mt-4">
+
+                                <a
+                                    href="{% url 'academico:nota_lista' %}"
+                                    class="btn btn-outline-secondary btn-cancelar"
+                                >
+                                    Cancelar
+                                </a>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-eliminar"
+                                >
+                                    Confirmar eliminación
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="pie-sistema">
+        Sistema Académico |
+        Plataforma de Gestión Universitaria
+    </footer>
+
+</body>
+</html>

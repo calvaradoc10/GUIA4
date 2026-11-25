@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% if object %}Editar{% else %}Registrar{% endif %}
+        universidad | Sistema Académico
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f5f3fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2d2440;
+            min-height: 100vh;
+        }
+
+        .barra-superior {
+            background: #3b1f6e;
+            padding: 22px 0;
+            color: white;
+        }
+
+        .marca {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .subtitulo {
+            color: #d6c9ee;
+            font-size: 13px;
+        }
+
+        .titulo-pagina {
+            color: #3b1f6e;
+            font-weight: 700;
+        }
+
+        .tarjeta {
+            background: white;
+            border: 1px solid #e6e1f0;
+            border-radius: 15px;
+            box-shadow: 0 5px 22px rgba(45,25,85,.06);
+            overflow: hidden;
+        }
+
+        .encabezado-form {
+            background: #3b1f6e;
+            padding: 22px 28px;
+            color: white;
+        }
+
+        .titulo-form {
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .cuerpo-form {
+            padding: 30px;
+        }
+
+        .titulo-seccion {
+            color: #3b1f6e;
+            font-size: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #e6e1f0;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #43395a;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            border-color: #e0d9ec;
+            padding: 11px 13px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #e08a1e;
+            box-shadow: 0 0 0 .2rem rgba(224,138,30,.12);
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .btn-principal {
+            background: #3b1f6e;
+            color: white;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-principal:hover {
+            background: #5b3a9e;
+            color: white;
+        }
+
+        .btn-cancelar {
+            padding: 11px 24px;
+            border-radius: 8px;
+        }
+
+        .info-logo {
+            background: #faf9fd;
+            border: 1px solid #e6e1f0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 12px;
+        }
+
+        .logo-actual {
+            max-width: 130px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        .pie-sistema {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .cuerpo-form {
+                padding: 20px;
+            }
+
+            .encabezado-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header class="barra-superior">
+        <div class="container">
+            <div class="marca">
+                SISTEMA ACADÉMICO
+            </div>
+
+            <div class="subtitulo">
+                Plataforma de Gestión Universitaria
+            </div>
+        </div>
+    </header>
+
+    {% include "core/_navegacion.html" %}
+
+    <main class="container py-5">
+
+        <!-- TÍTULO DE LA PÁGINA -->
+        <div class="mb-4">
+
+            <h2 class="titulo-pagina">
+                {% if object %}
+                    Editar universidad
+                {% else %}
+                    Registrar universidad
+                {% endif %}
+            </h2>
+
+            <p class="text-secondary">
+                Complete la información de la institución universitaria.
+            </p>
+
+        </div>
+
+        <!-- TARJETA PRINCIPAL -->
+        <div class="tarjeta">
+
+            <!-- ENCABEZADO DEL FORMULARIO -->
+            <div class="encabezado-form">
+
+                <h3 class="titulo-form">
+                    Información de la universidad
+                </h3>
+
+                <div class="small mt-2">
+                    Gestión de instituciones universitarias
+                </div>
+
+            </div>
+
+            <!-- CUERPO DEL FORMULARIO -->
+            <div class="cuerpo-form">
+
+                <form method="post"
+                      enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <!-- ERRORES GENERALES -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <h5 class="titulo-seccion">
+                        Datos institucionales de la universidad
+                    </h5>
+
+                    <!-- CAMPOS DEL FORMULARIO -->
+                    <div class="row g-4">
+
+                        {% for campo in form %}
+
+                            <div class="col-md-6">
+
+                                <label class="form-label"
+                                       for="{{ campo.id_for_label }}">
+
+                                    {{ campo.label }}
+
+                                    {% if campo.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ campo }}
+
+                                {% if campo.help_text %}
+                                    <div class="form-text">
+                                        {{ campo.help_text }}
+                                    </div>
+                                {% endif %}
+
+                                {% for error in campo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                                <!-- MOSTRAR LOGO ACTUAL -->
+                                {% if campo.name == "logo" and object and object.logo %}
+
+                                    <div class="info-logo">
+
+                                        <div class="small fw-bold mb-2">
+                                            Logotipo actual
+                                        </div>
+
+                                        <img
+                                            src="{{ object.logo.url }}"
+                                            alt="Logotipo de {{ object.nombre }}"
+                                            class="logo-actual"
+                                        >
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- INFORMACIÓN ADICIONAL -->
+                    <div class="alert alert-info mt-4 mb-0">
+
+                        <strong>Información:</strong>
+                        Los campos marcados con * son obligatorios.
+                        El logotipo es opcional y puede actualizarse
+                        posteriormente.
+
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="border-top mt-5 pt-4">
+
+                        <div class="d-flex flex-wrap gap-3 justify-content-end">
+
+                            <a href="{% url 'academico:universidad_lista' %}"
+                               class="btn btn-outline-secondary btn-cancelar">
+
+                                Cancelar
+
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-principal">
+
+                                {% if object %}
+                                    Guardar cambios
+                                {% else %}
+                                    Registrar universidad
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="pie-sistema">
+        Sistema Académico |
+        Plataforma de Gestión Universitaria
+    </footer>
+
+</body>
+</html>
+
