@@ -1,0 +1,22 @@
+{# Barra unificada presente en las 33 pantallas CRUD y en el Dashboard. #}
+<nav aria-label="Navegación del sistema" style="background:#fff;border-bottom:1px solid #e6e1f0;box-shadow:0 2px 8px rgba(59,31,110,.04)">
+  <div style="max-width:1140px;margin:0 auto;padding:10px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      {% if request.path != '/' %}
+      <a href="{% url 'inicio' %}" class="btn btn-outline-primary btn-sm" style="border-color:#3b1f6e;color:#3b1f6e;font-weight:600">
+        &larr; Volver al inicio
+      </a>
+      {% else %}
+      <span style="font-weight:700;color:#3b1f6e;font-size:14px">Panel principal</span>
+      {% endif %}
+      <span style="font-size:12px;color:#64748b">Sistema Académico</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:12px;color:#475569">Usuario: <strong>{{ request.user.get_username }}</strong></span>
+      <form action="{% url 'logout' %}" method="post" style="margin:0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Cerrar sesión del sistema">Cerrar sesión</button>
+      </form>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo|default:"Reporte Académico" }}</title>
+
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 18mm 16mm 22mm 16mm;
+
+            @frame footer_frame {
+                -pdf-frame-content: pie_pagina;
+                left: 16mm;
+                top: 193mm;
+                width: 265mm;
+                height: 10mm;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 9pt;
+            color: #2d2440;
+        }
+
+        /* Encabezado institucional */
+        .encabezado {
+            width: 100%;
+            background-color: #3b1f6e;
+        }
+
+        .encabezado td {
+            padding: 14px 16px;
+            border: none;
+            color: #ffffff;
+        }
+
+        .nombre-sistema {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .descripcion-sistema {
+            font-size: 9pt;
+            color: #e5ddf4;
+            padding-top: 5px;
+        }
+
+        .etiqueta {
+            text-align: right;
+            font-size: 10pt;
+            color: #ffffff;
+        }
+
+        /* Línea decorativa */
+        .linea {
+            height: 4px;
+            background-color: #e08a1e;
+            margin-bottom: 22px;
+        }
+
+        /* Título principal */
+        h1 {
+            color: #3b1f6e;
+            font-size: 20pt;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .subtitulo {
+            color: #65758b;
+            font-size: 10pt;
+            margin-bottom: 20px;
+        }
+
+        /* Información del reporte */
+        .informacion {
+            width: 100%;
+            margin-bottom: 22px;
+            background-color: #f2eff9;
+            border: 1px solid #e2dbef;
+        }
+
+        .informacion td {
+            padding: 11px 14px;
+            border: none;
+        }
+
+        .dato-titulo {
+            font-size: 8pt;
+            color: #63758a;
+        }
+
+        .dato-valor {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #3b1f6e;
+        }
+
+        /* Encabezado de la tabla */
+        .seccion-tabla {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #3b1f6e;
+            margin-bottom: 10px;
+        }
+
+        .tabla-datos {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+
+        .tabla-datos th {
+            background-color: #5b3a9e;
+            color: #ffffff;
+            padding: 11px 8px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #5b3a9e;
+        }
+
+        .tabla-datos td {
+            padding: 9px 8px;
+            border: 1px solid #e6e0f0;
+            color: #43395a;
+            vertical-align: middle;
+        }
+
+        .fila-vacia {
+            text-align: center;
+            padding: 18px;
+            color: #6a7888;
+        }
+
+        /* Información final */
+        .observacion {
+            margin-top: 20px;
+            padding-top: 8px;
+            border-top: 1px solid #e2dbef;
+            font-size: 8pt;
+            color: #66778b;
+        }
+
+        /* Pie de página */
+        #pie_pagina {
+            font-size: 8pt;
+            color: #758397;
+            border-top: 1px solid #dbd2ea;
+            padding-top: 7px;
+        }
+
+        .pie-tabla {
+            width: 100%;
+        }
+
+        .pie-tabla td {
+            border: none;
+            padding: 2px;
+        }
+
+        .derecha {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO DEL SISTEMA -->
+    <table class="encabezado">
+        <tr>
+            <td width="75%">
+                <div class="nombre-sistema">
+                    SISTEMA ACADÉMICO
+                </div>
+
+                <div class="descripcion-sistema">
+                    Plataforma de Gestión Universitaria
+                </div>
+            </td>
+
+            <td width="25%" class="etiqueta">
+                REPORTE INSTITUCIONAL
+            </td>
+        </tr>
+    </table>
+
+    <div class="linea"></div>
+
+    <!-- TÍTULO DEL REPORTE -->
+    <h1>
+        {{ titulo|default:"Reporte Académico" }}
+    </h1>
+
+    <p class="subtitulo">
+        Información consolidada del Sistema Académico
+    </p>
+
+    <!-- DATOS GENERALES -->
+    <table class="informacion">
+        <tr>
+            <td width="40%">
+                <div class="dato-titulo">
+                    FECHA DE GENERACIÓN
+                </div>
+
+                <div class="dato-valor">
+                    {% now "d/m/Y H:i" %}
+                </div>
+            </td>
+
+            <td width="30%">
+                <div class="dato-titulo">
+                    TOTAL DE REGISTROS
+                </div>
+
+                <div class="dato-valor">
+                    {{ filas|length }}
+                </div>
+            </td>
+
+            <td width="30%">
+                <div class="dato-titulo">
+                    FORMATO DEL DOCUMENTO
+                </div>
+
+                <div class="dato-valor">
+                    Reporte PDF
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- TABLA PRINCIPAL -->
+    <div class="seccion-tabla">
+        Detalle de registros
+    </div>
+
+    <table class="tabla-datos" repeat="1">
+        <thead>
+            <tr>
+                {% for encabezado in encabezados %}
+                    <th>{{ encabezado }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for fila in filas %}
+                <tr style="background-color: {% cycle '#ffffff' '#f5f3fa' %};">
+                    {% for valor in fila %}
+                        <td>{{ valor }}</td>
+                    {% endfor %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td
+                        colspan="{{ encabezados|length }}"
+                        class="fila-vacia"
+                    >
+                        No existen registros disponibles.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- OBSERVACIÓN -->
+    <div class="observacion">
+        Este documento fue generado automáticamente
+        a partir de la información registrada
+        en el Sistema Académico.
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <div id="pie_pagina">
+        <table class="pie-tabla">
+            <tr>
+                <td width="70%">
+                    SISTEMA ACADÉMICO |
+                    Gestión de Información Universitaria
+                </td>
+
+                <td width="30%" class="derecha">
+                    Página <pdf:pagenumber>
+                    de <pdf:pagecount>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
